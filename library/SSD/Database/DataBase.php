@@ -154,7 +154,7 @@ abstract class DataBase
         return false;
     }
 
-    private function _insert($array = null, $pre = null)
+    private function _insertArray($array = null, $pre = null)
     {
         if (!empty($array) && is_array($array)) {
             $fields = $array;
@@ -172,6 +172,43 @@ abstract class DataBase
     private function _updateArray($array = null, $pre = null)
     {
         if (!empty($array) && is_array($array)) {
+            $fields = $array;
+            $values = $array;
+            foreach ($array as $key => $value) {
+                $fields[] = !empty($pre) ? "`{$pre}.{$key}` = ?" : "`{$key}` = ?";
+                $values[] = $value;
+            }
+                return array($fields, $values);
         }
+    }
+    public function insert($table=null, $array=null){
+        $array = $this->_insertArray($array);
+        if(!empty($array) && is_array($array)){
+            $sql = "INSERT INTO `{$table}` (";
+            $sql .= implode(", ", $array[0]);
+            $sql .= ") VALUES (";
+            $sql .= implode(", ", $array[1]);
+            $sql .= ")";
+            $return = $this->execute($sql, $array[2]);
+            if($return){
+                $this->id = $this->getLastInsertId();
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+    public function update($table=null, $array=null, $value=null, $field="id"){
+        $array =$this->_updateArray($array);
+        $set ='';
+        if(!empty($array) && is_array($array) && !empty($field)){
+            $sql = "UPDATE `{$table}` SET ` ";
+            $sql .= implode(", ", $array[0]);
+            $sql .= " WHERE `{$field}` = ?";
+            $array[1][] = $value;
+
+            return $this->execute($sql, $array[1]);
+        }
+        return false;
     }
 }
