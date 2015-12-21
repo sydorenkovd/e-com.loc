@@ -81,6 +81,13 @@ abstract class DataBase
             }
             $paramsConverted = [];
             $paramsConverted = is_array($params) ? $params : array($params);
+
+            if(!$statement->execute($paramsConverted) || $statement->errorCode() != '00000'){
+                $errorInfo = $statement->errorInfo();
+                throw new \PDOException("Database error {$errorInfo[0]} : {$errorInfo[2]}, driver error code is {$errorInfo[1]} <br> SQL: {$sql}");
+            }
+            $this->affectedRows = $statement->rowCount();
+            return $statement;
         }
     }
 
