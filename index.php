@@ -14,7 +14,8 @@ if(ENVIRONMENT == 1 ){
 // directory separator
 const DS = DIRECTORY_SEPARATOR;
 require_once('inc'. DS . 'config.php');
-require_once('SSD' . DS . 'Autoloader.php');
+require_once('library/SSD' . DS . 'Autoloader.php');
+
 spl_autoload_register(['SSD\Autoloader', 'load']);
 use SSD\Core;
 $core = new Core();
