@@ -178,19 +178,21 @@ abstract class DataBase
                 $fields[] = !empty($pre) ? "`{$pre}.{$key}` = ?" : "`{$key}` = ?";
                 $values[] = $value;
             }
-                return array($fields, $values);
+            return array($fields, $values);
         }
     }
-    public function insert($table=null, $array=null){
+
+    public function insert($table = null, $array = null)
+    {
         $array = $this->_insertArray($array);
-        if(!empty($array) && is_array($array)){
+        if (!empty($array) && is_array($array)) {
             $sql = "INSERT INTO `{$table}` (";
             $sql .= implode(", ", $array[0]);
             $sql .= ") VALUES (";
             $sql .= implode(", ", $array[1]);
             $sql .= ")";
             $return = $this->execute($sql, $array[2]);
-            if($return){
+            if ($return) {
                 $this->id = $this->getLastInsertId();
                 return true;
             }
@@ -198,10 +200,12 @@ abstract class DataBase
         }
         return false;
     }
-    public function update($table=null, $array=null, $value=null, $field="id"){
-        $array =$this->_updateArray($array);
-        $set ='';
-        if(!empty($array) && is_array($array) && !empty($field)){
+
+    public function update($table = null, $array = null, $value = null, $field = "id")
+    {
+        $array = $this->_updateArray($array);
+        $set = '';
+        if (!empty($array) && is_array($array) && !empty($field)) {
             $sql = "UPDATE `{$table}` SET ` ";
             $sql .= implode(", ", $array[0]);
             $sql .= " WHERE `{$field}` = ?";
@@ -210,5 +214,116 @@ abstract class DataBase
             return $this->execute($sql, $array[1]);
         }
         return false;
+    }
+
+    public function delete($table = null, $value = null, $field = "id")
+    {
+        if (!empty($table) && !empty($value) && !empty($field)) {
+            $sql = "DELETE FROM `{$table}` WHERE `{$field}` = ?";
+
+            return $this->execute($sql, $value);
+        }
+        return false;
+    }
+
+    public function selectOne($table = null, $value = null, $field = "id")
+    {
+        if (!empty($table) && !empty($value) && !empty($field)) {
+            $sql = "SELECT * FROM `{$table}` WHERE `{$field}` = ?";
+            return $this->fetchOne($sql, $value);
+        }
+        return null;
+    }
+
+    public function beginTransaction()
+    {
+        if (!is_object($this->_pdoObject)) {
+            $this->_connect();
+        }
+        $this->_pdoObject->beginTransection();
+    }
+
+    public function commit()
+    {
+        if (!is_object($this->_pdoObject)) {
+            $this->_connect();
+        }
+        $this->_pdoObject->commit();
+    }
+
+    public function rollBack()
+    {
+        if (!is_object($this->_pdoObject)) {
+            $this->_connect();
+        }
+        $this->_pdoObject->rollBack();
+    }
+
+    public function executeTransaction($sql = null, $params = null)
+    {
+        if (!empty($sql)) {
+            return $this->_query($sql, $params);
+        }
+        return false;
+    }
+
+    public function insertTransaction($table = null, $array = null)
+    {
+        $array = $this->_insertArray($array);
+        if (!empty($table) && !empty($array)) {
+            $sql = "INSERT INTO `{$table}` (";
+            $sql .= implode(", ", $array[0]);
+            $sql .= ") VALUES (";
+            $sql .= implode(", ", $array[1]);
+            $sql .= ")";
+            $return = $this->executeTransaction($sql, $array[2]);
+
+            if ($return) {
+                $this->id = $this->getLastInsertId();
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
+    public function updateTransaction($table = null, $array = null, $value = null, $field = "id")
+    {
+        $array = $this->_updateArray($array);
+        if (!empty($array) && !empty($table) && !empty($value)) {
+            $sql = "UPDATE `{$table}` SET ";
+            $sql .= implode(", ", $array[0]);
+            $sql .= " WHERE `{$field}` = ?";
+            $array[1][] = $value;
+            return $this->executeTransaction($sql, $array[1]);
+        }
+        return false;
+    }
+
+    public function deleteTransaction($table = null, $value = null, $field = "id")
+    {
+        if (!empty($table) && !empty($value)) {
+            $sql = "DELETE FROM `{$table}` WHERE `{$field}` = ?";
+            return $this->executeTransaction($sql, $field);
+        }
+        return false;
+    }
+
+    public function getOneTransaction($sql = null, $params = [])
+    {
+        if (!empty($sql)) {
+            $statement = $this->_query($sql, $params);
+            return $statement->fetch($this->_fetchMode);
+        }
+        return null;
+    }
+
+    public function selectOneTransaction($table = null, $value = null, $field = "id")
+    {
+        if (!empty($table) && !empty($value)) {
+            $sql = "SELECT * FROM `{$table}` WHERE `{$field}` = ?";
+            return $this->getOneTransaction($sql, $value);
+        }
+        return null;
     }
 }
