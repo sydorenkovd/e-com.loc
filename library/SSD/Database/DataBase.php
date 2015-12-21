@@ -90,5 +90,13 @@ abstract class DataBase
             return $statement;
         }
     }
+    public function setFetchMode($fetchMode = null){
+        if(!empty($fetchMode)){
+            $this->_fetchMode = $fetchMode;
+        }
+    }
+    public function getLastInsertId($sequenceName = null){
+        return $this->_pdoObject->lastInsertId($sequenceName);
+    }
 
 }
