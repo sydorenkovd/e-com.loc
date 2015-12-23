@@ -75,54 +75,64 @@ class Url
             }
         }
     }
-    public function splitRaw($item = null){
-        if(!empty($item) && !is_array($item)){
+
+    public function splitRaw($item = null)
+    {
+        if (!empty($item) && !is_array($item)) {
             $itemRaw = explode('=', $item);
-            if(count($itemRaw) > 1 && !Helper::isEmpty($itemRaw[1])){
+            if (count($itemRaw) > 1 && !Helper::isEmpty($itemRaw[1])) {
                 $this->paramsRaw[$itemRaw[0]] = $itemRaw[1];
             }
         }
     }
-    public function getRaw($param = null){
-        if(!empty($param) && array_key_exists($param, $this->paramsRaw)){
+
+    public function getRaw($param = null)
+    {
+        if (!empty($param) && array_key_exists($param, $this->paramsRaw)) {
             return $this->paramsRaw[$param];
         }
     }
-    public function get($param = null){
-        if(!empty($param) && array_key_exists($param, $this->params)){
+
+    public function get($param = null)
+    {
+        if (!empty($param) && array_key_exists($param, $this->params)) {
             return $this->params[$param];
         }
     }
-    public function href($main = null, $params = null){
-        if(!empty($main)){
+
+    public function href($main = null, $params = null)
+    {
+        if (!empty($main)) {
             $out = array($main);
-            if(!empty($params) && is_array($params)){
-                foreach($params as $key => $value){
+            if (!empty($params) && is_array($params)) {
+                foreach ($params as $key => $value) {
                     $out = $value;
                 }
             }
             return '/' . implode('/', $out) . PAGE_EXT;
         }
     }
-    public function getCurrent($exclude = null, $extention = false){
+
+    public function getCurrent($exclude = null, $extention = false)
+    {
         $out = [];
-        if($this->module != 'front'){
+        if ($this->module != 'front') {
             $out[] = $this->module;
         }
         $out[] = $this->main;
-        if(!empty($this->params)){
-            if(!empty($exclude)){
+        if (!empty($this->params)) {
+            if (!empty($exclude)) {
                 $exclude = Helper::makeArray($exclude);
-                foreach($this->params as $key => $value){
-                    if(!in_array($key, $exclude)){
+                foreach ($this->params as $key => $value) {
+                    if (!in_array($key, $exclude)) {
                         $out[] = $key;
                         $out[] = $value;
                     }
                 }
             } else {
-                foreach($this->params as $key => $value){
-                        $out[] = $key;
-                        $out[] = $value;
+                foreach ($this->params as $key => $value) {
+                    $out[] = $key;
+                    $out[] = $value;
                 }
             }
         }

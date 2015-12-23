@@ -5,13 +5,13 @@ $cats = $objCatalogue->getCategories();
 $objBusiness = new Business();
 $business = $objBusiness->getBusiness();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Ecommerce website project</title>
-<meta name="description" content="Ecommerce website project" />
-<meta name="keywords" content="Ecommerce website project" />
+<title><?= $this->_meta_title; ?></title>
+<meta name="description" content="<?= $this->_meta_description; ?>" />
+<meta name="keywords" content="<?= $this->_meta_keywords; ?>" />
 <meta http-equiv="imagetoolbar" content="no" />
 <link href="/css/core.css" rel="stylesheet" type="text/css" />
 </head>
@@ -23,10 +23,16 @@ $business = $objBusiness->getBusiness();
 			if (Login::isLogged(Login::$_login_front)) {
 				echo '<div id="logged_as">Logged in as: <strong>';
 				echo Login::getFullNameFront(Session::getSession(Login::$_login_front));
-				echo '</strong> | <a href="/?page=orders">My orders</a>';
-				echo ' | <a href="/?page=logout">Logout</a></div>';				
+				echo '</strong> | <a href="';
+                echo $this->objUrl->href('orders');
+                echo '">My orders</a>';
+				echo ' | <a href="';
+                echo $this->objUrl->href('logout');
+                echo '">Logout</a></div>';
 			} else {
-				echo '<div id="logged_as"><a href="/?page=login">Login</a></div>';
+				echo '<div id="logged_as"><a href="';
+                echo $this->objUrl->href('login');
+                echo '">Login</a></div>';
 			}
 		?>
 	</div>
@@ -40,11 +46,13 @@ $business = $objBusiness->getBusiness();
 			<ul id="navigation">
 				<?php 
 					foreach($cats as $cat) {
-						echo "<li><a href=\"/?page=catalogue&amp;category=".$cat['id']."\"";
-						echo Helper::getActive(array('category' => $cat['id']));
-						echo ">";
-						echo Helper::encodeHtml($cat['name']);
-						echo "</a></li>";
+						echo '"<li><a href=\"';
+                        echo $this->objUrl->href('catalogue', ['category', $cat['identity']]);
+                        echo '"';
+                        echo $this->objNavigation->active('catalogue', ['category', $cat['identity']]);
+                        echo '>';
+                        echo Helper::encodeHTML($cat['name']);
+						echo '</a></li>';
 					}
 				?>
 				</ul>
