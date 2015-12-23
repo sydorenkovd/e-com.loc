@@ -83,4 +83,51 @@ class Url
             }
         }
     }
+    public function getRaw($param = null){
+        if(!empty($param) && array_key_exists($param, $this->paramsRaw)){
+            return $this->paramsRaw[$param];
+        }
+    }
+    public function get($param = null){
+        if(!empty($param) && array_key_exists($param, $this->params)){
+            return $this->params[$param];
+        }
+    }
+    public function href($main = null, $params = null){
+        if(!empty($main)){
+            $out = array($main);
+            if(!empty($params) && is_array($params)){
+                foreach($params as $key => $value){
+                    $out = $value;
+                }
+            }
+            return '/' . implode('/', $out) . PAGE_EXT;
+        }
+    }
+    public function getCurrent($exclude = null, $extention = false){
+        $out = [];
+        if($this->module != 'front'){
+            $out[] = $this->module;
+        }
+        $out[] = $this->main;
+        if(!empty($this->params)){
+            if(!empty($exclude)){
+                $exclude = Helper::makeArray($exclude);
+                foreach($this->params as $key => $value){
+                    if(!in_array($key, $exclude)){
+                        $out[] = $key;
+                        $out[] = $value;
+                    }
+                }
+            } else {
+                foreach($this->params as $key => $value){
+                        $out[] = $key;
+                        $out[] = $value;
+                }
+            }
+        }
+        $url = '/' . implode('/', $out);
+        $url .= $extention ? PAGE_EXT : null;
+        return $url;
+    }
 }
