@@ -75,7 +75,7 @@ class Url
             }
         }
     }
-    public function splitRow($item = null){
+    public function splitRaw($item = null){
         if(!empty($item) && !is_array($item)){
             $itemRaw = explode('=', $item);
             if(count($itemRaw) > 1 && !Helper::isEmpty($itemRaw[1])){
