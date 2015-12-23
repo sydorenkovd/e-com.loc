@@ -2,6 +2,7 @@
 if(!isset($_SESSION)) {
 	session_start();
 }
+defined("PAGE_EXT") || define("PAGE_EXT", ".html");
 
 // site domain name with http
 defined("SITE_URL")
@@ -45,10 +46,10 @@ defined("CATALOGUE_PATH")
 	
 // add all above directories to the include path
 set_include_path(implode(PATH_SEPARATOR, array(
-	realpath(ROOT_PATH.DS.CLASSES_DIR),
-	realpath(ROOT_PATH.DS.PAGES_DIR),
+//	realpath(ROOT_PATH.DS.CLASSES_DIR),
+//	realpath(ROOT_PATH.DS.PAGES_DIR),
 	realpath(ROOT_PATH.DS.MOD_DIR),
 	realpath(ROOT_PATH.DS.INC_DIR),
-	realpath(ROOT_PATH.DS.TEMPLATE_DIR),
+//	realpath(ROOT_PATH.DS.TEMPLATE_DIR),
 	get_include_path()
 )));
